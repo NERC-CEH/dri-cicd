@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: ${{ github.event.repository.name }}
+      test_image:
+        description: "Runs the image test if true"
+        required: false
+        type: boolean
+        default: false
     
     outputs:
       image_artifact_name:
@@ -96,11 +101,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [check_file, build]
+    if: ${{ inputs.test_image }} == true && ${{ needs.check_file.outputs.dockerfile_exists }} == "true"
     env:
       image_name: ${{ needs.build.outputs.image_name }}
       artifact_file: ${{ needs.build.outputs.artifact_file }}
       artifact_name: ${{ needs.build.outputs.artifact_name }}
-    if: ${{ needs.check_file.outputs.dockerfile_exists }} == "true"
     steps:
       - name: Download docker image
         uses: actions/download-artifact@v4
