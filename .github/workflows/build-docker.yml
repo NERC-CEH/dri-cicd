@@ -16,7 +16,7 @@ on:
         description: "Runs the image test if true"
         required: false
         type: boolean
-        default: false
+        default: true
     
     outputs:
       image_artifact_name:
