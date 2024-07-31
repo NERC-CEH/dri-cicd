@@ -20,10 +20,10 @@ on:
     
     outputs:
       image_artifact_name:
-        description: "Keyword of the image arifact."
+        description: "Keyword of the image artifact."
         value: ${{ jobs.build.outputs.artifact_name }}
       image_artifact_file:
-        description: "Path of the image arifact."
+        description: "Path of the image artifact."
         value: ${{ jobs.build.outputs.artifact_file }}
       image_name:
         description: "Full name of the docker image."
