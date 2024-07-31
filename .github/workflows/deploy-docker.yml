@@ -51,6 +51,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker push ${{ inputs.image_name }}
+          new_tag="${ECR_REGISTRY}/${{ inputs.image_name}}"
+          docker image tag ${{ inputs.image_name }} $new_tag
+          docker push $new_tag
 
 
