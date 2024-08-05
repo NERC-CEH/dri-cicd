@@ -3,7 +3,14 @@
 
 name: Python Install and Tests
 
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      coverage_threshold:
+        description: 'Minimum required test coverage percentage'
+        required: false
+        type: number
+        default: 0
 
 permissions:
   contents: read
@@ -26,4 +33,9 @@ jobs:
     - name: Check format with ruff
       run: ruff format --check
     - name: Test with pytest
-      run: pytest
+      run: |
+        if [ "${{ inputs.coverage_threshold }}" -gt 0 ]; then
+          pytest --cov-fail-under=${{ inputs.coverage_threshold }}
+        else
+          pytest
+        fi
