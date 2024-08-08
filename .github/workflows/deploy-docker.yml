@@ -43,6 +43,10 @@ jobs:
         with:
           name: ${{ inputs.image_artifact_name }}
           path: /tmp
+      - name: Delete Docker Artifact
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: ${{ inputs.image_artifact_name }}
       - name: Load image
         run: |
           docker load --input /tmp/${{ inputs.image_artifact_file }}
@@ -54,5 +58,4 @@ jobs:
           new_tag="${ECR_REGISTRY}/${{ inputs.image_name}}"
           docker image tag ${{ inputs.image_name }} $new_tag
           docker push $new_tag
-
 
