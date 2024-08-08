@@ -133,11 +133,11 @@ jobs:
           docker stop test-container
           docker rm test-container
 
-    teardown:
-      if: failure()
-      needs: [build, test]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: geekyeggo/delete-artifact@v5
-          with:
-              name: ${{ env.artifact_name }}
+  teardown:
+    if: failure()
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+            name: ${{ env.artifact_name }}
