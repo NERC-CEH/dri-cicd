@@ -54,5 +54,12 @@ jobs:
           new_tag="${ECR_REGISTRY}/${{ inputs.image_name}}"
           docker image tag ${{ inputs.image_name }} $new_tag
           docker push $new_tag
-
+  teardown:
+      if: always()
+      needs: [deploy]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: geekyeggo/delete-artifact@v5
+          with:
+              name: ${{ inputs.image_artifact_name }}
 
