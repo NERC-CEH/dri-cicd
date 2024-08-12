@@ -103,15 +103,18 @@ jobs:
 
       # Deployment
       - name: Configure AWS credentials
+        if: ${{ github.ref_name == 'main' || github.head_ref == 'main'}}
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Login to Amazon ECR
+        if: ${{ github.ref_name == 'main' || github.head_ref == 'main'}}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Push image
+        if: ${{ github.ref_name == 'main' || github.head_ref == 'main'}}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
