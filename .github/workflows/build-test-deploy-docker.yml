@@ -72,17 +72,11 @@ jobs:
         id: build-docker-image
         run: |
           IMAGE_NAME=${{ inputs.image_name }}:${PACKAGE_VERSION}
-          ARTIFACT_FILE=image.tar
-          ARTIFACT_NAME=docker-image
 
-          echo "IMAGE_NAME=${IMAGE_NAME}" > /tmp/image-name.txt
           echo "IMAGE_NAME: ${IMAGE_NAME}"
           docker build -t $IMAGE_NAME .
-          docker save --output /tmp/${ARTIFACT_FILE} $IMAGE_NAME
 
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "artifact_file=${ARTIFACT_FILE}" >> $GITHUB_OUTPUT
-          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       
       # Testing image
       - name: Run Docker Image
@@ -123,12 +117,3 @@ jobs:
           new_tag="${ECR_REGISTRY}/${{ inputs.image_name}}"
           docker image tag ${{ inputs.image_name }} $new_tag
           # docker push $new_tag
-
-  teardown:
-    if: failure()
-    needs: [build, test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: geekyeggo/delete-artifact@v5
-        with:
-            name: ${{ env.artifact_name }}
