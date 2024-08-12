@@ -118,4 +118,4 @@ jobs:
           image_name=${{ steps.build-docker-image.outputs.image_name }}
           full_image_name="${ECR_REGISTRY}/${image_name}"
           docker image tag $image_name $full_image_name
-          # docker push $new_tag
+          docker push $new_tag
