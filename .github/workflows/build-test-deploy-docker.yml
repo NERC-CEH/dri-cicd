@@ -122,7 +122,7 @@ jobs:
         run: |
           new_tag="${ECR_REGISTRY}/${{ inputs.image_name}}"
           docker image tag ${{ inputs.image_name }} $new_tag
-          docker push $new_tag
+          # docker push $new_tag
 
   teardown:
     if: failure()
