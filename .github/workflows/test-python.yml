@@ -11,6 +11,11 @@ on:
         required: false
         type: number
         default: 0
+      use_localstack:
+        description: 'Starts localstack if true'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -24,6 +29,12 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.12"
+    - name: Start LocalStack
+      if: ${{ inputs.use_localstack }}
+      uses: LocalStack/setup-localstack@v0.2.2
+      with:
+        image-tag: 'latest'
+        install-awslocal: 'true'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
