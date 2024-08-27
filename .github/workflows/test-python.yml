@@ -52,7 +52,7 @@ jobs:
       if: ${{ inputs.use_pyright }}
       uses: jakebailey/pyright-action@v2
       with:
-        working-directory: src
+        working-directory: ${{ github.workspace }}/src
     - name: Test with pytest
       run: |
         if [ "${{ inputs.coverage_threshold }}" -gt 0 ]; then
