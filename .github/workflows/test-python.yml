@@ -16,6 +16,11 @@ on:
         required: false
         type: boolean
         default: false
+      use_pyright:
+        description: "Does static checks with pyright if true"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -43,6 +48,9 @@ jobs:
       run: ruff check
     - name: Check format with ruff
       run: ruff format --check
+    - name: Static type checking with pyright
+      if: ${{ inputs.use_pyright }}
+      uses: jakebailey/pyright-action@v2
     - name: Test with pytest
       run: |
         if [ "${{ inputs.coverage_threshold }}" -gt 0 ]; then
