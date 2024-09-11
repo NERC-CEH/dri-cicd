@@ -11,11 +11,11 @@ on:
         required: false
         type: number
         default: 0
-      use_localstack:
-        description: 'Starts localstack if true'
+      localstack_profile_name:
+        description: 'Builds specified localstack profile'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: ''
       use_pyright:
         description: "Does static checks with pyright if true"
         required: false
@@ -34,12 +34,9 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.12"
-    - name: Start LocalStack
-      if: ${{ inputs.use_localstack }}
-      uses: LocalStack/setup-localstack@v0.2.2
-      with:
-        image-tag: 'latest'
-        install-awslocal: 'true'
+    - name: Build specified localstack profile
+      if: ${{ inputs.localstack_profile_name }}
+      run: docker compose --profile ${{ inputs.localstack_profile_name }} up
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
