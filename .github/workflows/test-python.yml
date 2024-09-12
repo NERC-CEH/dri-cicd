@@ -36,7 +36,10 @@ jobs:
         python-version: "3.12"
     - name: Build specified localstack profile
       if: ${{ inputs.localstack_profile_name }}
-      run: docker compose --profile ${{ inputs.localstack_profile_name }} up
+      uses: hoverkraft-tech/compose-action@v2.0.1
+      with:
+        compose-file: "./docker-compose.yaml"
+        services: ${{ inputs.localstack_profile_name }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -55,3 +58,6 @@ jobs:
         else
           pytest
         fi
+
+
+
