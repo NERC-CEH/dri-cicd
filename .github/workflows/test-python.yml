@@ -40,6 +40,9 @@ jobs:
       with:
         compose-file: "./docker-compose.yaml"
         services: ${{ inputs.localstack_profile_name }}
+    - name: Update snapshots
+      if: ${{ inputs.localstack_profile_name }}
+      run: pytest --snapshot-update
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
