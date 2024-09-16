@@ -21,6 +21,11 @@ on:
         required: false
         type: boolean
         default: false
+      optional_dependencies:
+        description: "Specifies the optional dependencies to install for pytest"
+        required: false
+        type: string
+        default: "[lint, test]"
 
 permissions:
   contents: read
@@ -43,7 +48,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install -e .[lint,test]
+        python -m pip install -e .${{ inputs.optional_dependencies }}
     - name: Lint with ruff
       run: ruff check
     - name: Check format with ruff
