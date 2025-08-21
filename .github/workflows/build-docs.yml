@@ -3,6 +3,9 @@ name: Documentation Building
 
 on:
   workflow_call:
+    secrets:
+      PRIVATE_KEY:
+        required: false
     inputs:
       pages_artifact_name:
         description: "Name of pages artifact"
