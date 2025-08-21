@@ -5,6 +5,9 @@ name: Python Install and Tests
 
 on:
   workflow_call:
+    secrets:
+      PRIVATE_KEY:
+        required: false
     inputs:
       coverage_threshold:
         description: 'Minimum required test coverage percentage'
