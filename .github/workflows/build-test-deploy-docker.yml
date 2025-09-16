@@ -28,7 +28,7 @@ on:
         description: "Whether to use uv to fetch Python dependencies."
         required: false
         type: boolean
-        default: false
+        default: true
       private_repos:
         description: Set up access to private repositories
         required: false
