@@ -52,7 +52,7 @@ jobs:
       dockerfile_exists: ${{ steps.check-file.outputs.file_exists}}
     steps:
       - name: Clone the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Check file existence
@@ -72,19 +72,19 @@ jobs:
       image_name: ${{ steps.build-docker-image.outputs.image_name }}
       artifact_file: ${{ steps.build-docker-image.outputs.artifact_file }}
       artifact_name: ${{ steps.build-docker-image.outputs.artifact_name }}
-    if: ${{ needs.check_file.outputs.dockerfile_exists }} == "true"
+    if: ${{ needs.check_file.outputs.dockerfile_exists == 'true' }}
     steps:
       - name: Clone the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install uv
         if: ${{ inputs.use_uv }}
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
       - name: Get access token for private repos
         if: ${{ inputs.private_repos }}
         id: app-token
@@ -147,7 +147,7 @@ jobs:
       artifact_name: ${{ needs.build.outputs.artifact_name }}
     steps:
       - name: Download docker image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.artifact_name }}
           path: /tmp
