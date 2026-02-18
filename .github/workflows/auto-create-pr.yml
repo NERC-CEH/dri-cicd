@@ -1,0 +1,33 @@
+name: Auto create a PR
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      base:
+        description: "The base branch"
+        required: true
+        type: string
+      head:
+        description: "The head branch"
+        required: true
+        type: string
+
+jobs:
+  auto-create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.head }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          base: ${{ inputs.base }}
+          commit-message: "auto merge ${{ inputs.base}} with ${{ inputs.head }}"
+          branch: ${{ inputs.head }}
