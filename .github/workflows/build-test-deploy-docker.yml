@@ -38,6 +38,7 @@ on:
         description: The branch the action is run on
         required: true
         type: string
+        default: main
 
 permissions:
   contents: read
