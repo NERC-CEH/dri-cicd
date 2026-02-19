@@ -36,7 +36,7 @@ on:
         default: false
       branch:
         description: The branch the action is run on
-        required: true
+        required: false
         type: string
         default: main
 
