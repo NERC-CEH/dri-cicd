@@ -24,7 +24,6 @@ jobs:
         run: |
           gh pr view ${{ inputs.head }} \
           || gh pr create \
-              --repo=${GITHUB_REPO} \
               --head ${{ inputs.head }} \
               --base ${{ inputs.base }} \
               --title "Sync ${{ inputs.head }} to ${{ inputs.base }}" \
