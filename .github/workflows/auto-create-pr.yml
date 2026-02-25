@@ -25,15 +25,22 @@ jobs:
 
       - name: Create PR between two branches
         run: |
-          gh pr list \
+          COUNT=$(gh pr list \
             --head ${{ inputs.head }} \
-            --base ${{ inputs.base }}  \
+            --base ${{ inputs.base }} \
+            --state open \
             --json number \
-            --jq '.[].number' \
-          || gh pr create \
+            --jq 'length')
+          
+          if [ "$COUNT" -eq 0 ]; then
+            gh pr create \
               --head ${{ inputs.head }} \
               --base ${{ inputs.base }} \
               --title "Sync ${{ inputs.head }} to ${{ inputs.base }}" \
               --body "Automated PR to sync ${{ inputs.head }} into ${{ inputs.base }}"
+
+          else
+            echo "PR already exists. Skipping creation."
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
