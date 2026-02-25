@@ -20,6 +20,9 @@ jobs:
   auto-create-pr:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
       - name: Create main to staging PR (if it doesn't exist)
         run: |
           gh pr view ${{ inputs.head }} \
