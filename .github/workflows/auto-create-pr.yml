@@ -23,9 +23,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v6
 
-      - name: Create main to staging PR (if it doesn't exist)
+      - name: Create PR between two branches
         run: |
-          gh pr view ${{ inputs.head }} \
+          gh pr list \
+            --head ${{ inputs.head }} \
+            --base ${{ inputs.base }}  \
+            --json number \
+            --jq '.[].number' \
           || gh pr create \
               --head ${{ inputs.head }} \
               --base ${{ inputs.base }} \
