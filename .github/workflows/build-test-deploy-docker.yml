@@ -38,7 +38,17 @@ on:
         description: The github event type
         required: false
         type: string
-        default: 'push'
+        default: ""
+      docker_target:
+        description: "Optional Docker build target (e.g. prod)"
+        required: false
+        type: string
+        default: ""
+      tag_suffix:
+        description: "Optional suffix appended to the image tag (e.g. -variant)"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -109,13 +119,29 @@ jobs:
         run: |
           version=$(python -c "import ${{ inputs.package_name}}; print(${{ inputs.package_name}}.__version__)")
           echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
+      - name: Configure AWS credentials
+        if: ${{ inputs.event_type == 'push' }}
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Login to Amazon ECR
+        if: ${{ inputs.event_type == 'push' }}
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
       - name: Build image name
         id: build-docker-image
         run: |
-          IMAGE_NAME=${{ inputs.image_name }}:${PACKAGE_VERSION}
+          IMAGE_NAME=${{ inputs.image_name }}:${PACKAGE_VERSION}${{ inputs.tag_suffix }}
+
+          target_args=""
+          if [ -n "${{ inputs.docker_target }}" ]; then
+            target_args="--target ${{ inputs.docker_target }}"
+          fi
 
           echo "IMAGE_NAME: ${IMAGE_NAME}"
-          docker build -t $IMAGE_NAME ${GH_TOKEN:+--secret id=GH_TOKEN} .
+          docker build $target_args -t $IMAGE_NAME ${GH_TOKEN:+--secret id=GH_TOKEN} .
 
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
@@ -142,17 +168,6 @@ jobs:
           docker rm test-container
 
       # Deployment
-      - name: Configure AWS credentials
-        if: ${{ inputs.event_type == 'push' }}
-        uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Login to Amazon ECR
-        if: ${{ inputs.event_type == 'push' }}
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
       - name: Push image
         if: ${{ inputs.event_type == 'push' }}
         env:
