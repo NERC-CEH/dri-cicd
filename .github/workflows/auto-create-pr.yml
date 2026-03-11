@@ -36,7 +36,7 @@ jobs:
           
           if [ "$COUNT" -eq 0 ]; then
             gh pr create \
-              --head ${{ inputs.head }} \
+              --head ${{ github.repository_owner }}:${{ inputs.head }} \
               --base ${{ inputs.base }} \
               --title "Sync ${{ inputs.head }} to ${{ inputs.base }}" \
               --body "Automated PR to sync ${{ inputs.head }} into ${{ inputs.base }}"
