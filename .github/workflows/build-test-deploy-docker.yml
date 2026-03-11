@@ -34,11 +34,11 @@ on:
         required: false
         type: boolean
         default: false
-      branch:
-        description: The branch the action is run on
+      event_type:
+        description: The github event type
         required: false
         type: string
-        default: main
+        default: ""
       docker_target:
         description: "Optional Docker build target (e.g. prod)"
         required: false
@@ -120,14 +120,14 @@ jobs:
           version=$(python -c "import ${{ inputs.package_name}}; print(${{ inputs.package_name}}.__version__)")
           echo "PACKAGE_VERSION=$version" >> $GITHUB_ENV
       - name: Configure AWS credentials
-        if: ${{ github.ref_name == inputs.branch || github.head_ref == inputs.branch}}
+        if: ${{ inputs.event_type == 'push' }}
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Login to Amazon ECR
-        if: ${{ github.ref_name == inputs.branch || github.head_ref == inputs.branch}}
+        if: ${{ inputs.event_type == 'push' }}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build image name
@@ -169,7 +169,7 @@ jobs:
 
       # Deployment
       - name: Push image
-        if: ${{ github.ref_name == inputs.branch || github.head_ref == inputs.branch}}
+        if: ${{ inputs.event_type == 'push' }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
