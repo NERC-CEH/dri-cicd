@@ -11,7 +11,7 @@ Some repositories depend on private repos.  To enable access to them
 from the CI environment, follow the below steps:
 
 1. In the [settings][] for the `dri-private-repos` GitHub app,
-   generate a new private key and make a note of it.
+   generate a new private key and save the downloaded PEM file.
 
 2. Add the private key as a repository secret called `PRIVATE_KEY` by
    going to
