@@ -49,6 +49,11 @@ on:
         required: false
         type: string
         default: ""
+      docker_build_args:
+        description: "Optional docker --build-arg value e.g. KEY=value"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -131,6 +136,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build image name
+        # Skipped on PRs: docker_build_args may reference private ECR images that
+        # require ECR login, which is only configured on push events above.
+        if: ${{ inputs.event_type == 'push' }}
         id: build-docker-image
         run: |
           IMAGE_NAME=${{ inputs.image_name }}:${PACKAGE_VERSION}${{ inputs.tag_suffix }}
@@ -140,8 +148,13 @@ jobs:
             target_args="--target ${{ inputs.docker_target }}"
           fi
 
+          build_arg_flag=""
+          if [ -n "${{ inputs.docker_build_args }}" ]; then
+            build_arg_flag="--build-arg ${{ inputs.docker_build_args }}"
+          fi
+
           echo "IMAGE_NAME: ${IMAGE_NAME}"
-          docker build $target_args -t $IMAGE_NAME ${GH_TOKEN:+--secret id=GH_TOKEN} .
+          docker build $target_args $build_arg_flag -t $IMAGE_NAME ${GH_TOKEN:+--secret id=GH_TOKEN} .
 
           echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
